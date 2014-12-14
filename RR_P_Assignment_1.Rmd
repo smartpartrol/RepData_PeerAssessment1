@@ -71,18 +71,11 @@ time = ac %>% select(interval, steps ) %>% group_by (interval) %>%
   summarize( Avg_Steps = mean(steps , na.rm=T)) %>%
   arrange(desc(interval)) 
 
-time_p = gvisLineChart(time , xvar="interval", yvar="Avg_Steps",
- options=list(title="          Plotted Intervals by Daily Average", legend="left",
-                titleTextStyle="{color:'black', fontSize:18}",                         
-                vAxis="{gridlines:{color:'black', count:3}}",
-                hAxis="{title:'Avg Steps', titleTextStyle:{color:'black'}}"
-                ,series="[{color:'blue', targetAxisIndex: 0}, 
-                         {color: 'black',targetAxisIndex:1}]",
-                vAxes="[{title:'Interval'}, 
-                                  {title:'Value 2 (\U00A3)'}]"                       
-                ))
-
-print(time_p, "chart")
+ggplot(data=time, aes(x=interval, y=Avg_Steps , file="blue" )) + 
+    geom_line( size=1.2) +                      
+    xlab("5 Minute Interval") + ylab("Average Steps Taken") + 
+    ggtitle("Average Activity Pattern By Internal") + 
+    theme_bw() 
 ```
 The above chart has the 5 Minute Interval as the horizontal axis and the Average steps per day as the vertical axis. Can't wait for Rcharts to make labeling easier.
 
@@ -129,8 +122,8 @@ newhist = miss_val %>% group_by(Date) %>%
 
 ggvis( as.data.frame(newhist) , ~ D_steps , fill :="#FF9900") %>% 
   layer_histograms() %>%
-   add_axis("x", title="Counts", title_offset = 50) %>% 
-  add_axis("y", title="Steps", title_offset = 50)
+   add_axis("x", title="Steps", title_offset = 50) %>% 
+  add_axis("y", title="Counts", title_offset = 50)
 
 ```
 ```{r Newms, echo=TRUE}
