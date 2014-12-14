@@ -2,7 +2,10 @@
 title: "RR_Peer_Assignment1"
 author: "Charles F."
 date: "Saturday, December 13, 2014"
-output: html_document
+output:
+  html_document:
+    fig_height: 6
+    fig_width: 8
 ---
 
 ```{r Libraries , echo=TRUE}
@@ -27,6 +30,7 @@ str(ac) ; head(ac)
 ac$Date = as.Date(ac$date)
 ac$date = NULL
 ```
+
 Changing date to actual date as was implied in the assignment
 I could transfrom the interval as a massive factor variable but decided to leave as is for this analysis. Steps are numberic so they are fine.
 
@@ -37,6 +41,7 @@ ac_days = ac %>% group_by(Date) %>%
 
 mean(ac_days$D_steps)
 ```
+
 I take the total steps for each day and then take the overall mean of the summed steps.
 
 ##Make a histogram of the total number of steps taken each day
@@ -57,6 +62,7 @@ Here they are in actual hard numbers
 mean(ac_days$D_steps)
 median(ac_days$D_steps)
 ```
+
 It appears that the median is slightly higer than mean implying that the data is skewed, as the histogram confrims.
 
 #What is the average daily activity pattern?
@@ -73,6 +79,7 @@ ggplot(data=time, aes(x=interval, y=Avg_Steps , file="blue" )) +
     ggtitle("Average Activity Pattern By Internal") + 
     theme_bw() 
 ```
+
 The above chart has the 5 Minute Interval as the horizontal axis and the Average steps per day as the vertical axis. Can't wait for Rcharts to make labeling easier.
 
 
@@ -82,6 +89,7 @@ Max_num = max(time$Avg_Steps)
 Max_num
 time %>% filter( Avg_Steps ==  Max_num ) %>% select(interval)
 ```
+
 The interval with the higest value is at 835.
 
 #Imputing missing values
@@ -90,6 +98,7 @@ The interval with the higest value is at 835.
 ```{r Missing, echo=TRUE}
 sum(is.na(ac))
 ```
+
 2304 or 13% of the data has missing values.
 
 ###Devise a strategy for filling in all of the missing values in the dataset. 
@@ -108,6 +117,7 @@ miss_val$steps = NULL ; miss_val$Avg_Steps = NULL;
 head(miss_val) ; head(ac)
 sum(is.na(miss_val))
 ```
+
 The dplyr takes the orginal data set and rolls it up by the Date and interval. It then calculates the sum and renames that to the orginal step name. Values are then imputed when the are equal to missing, in this case 0, with the interval average generated from the time plot.
 
 ###Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
@@ -124,10 +134,11 @@ mean(newhist$D_steps, na.rm=T) ; median(newhist$D_steps, na.rm=T)
 
 mean(ac_days$D_steps, na.rm=T) ; median(ac_days$D_steps, na.rm=T)
 ```
+
 The mean drastically increased whem compared to the data set that was not imputed. There is now a drastic increase the in the overall steps per day because previous values were excluded from the totals.
 There is almost a 5000 increase in the median.
 
-###########################################################################
+
 #Are there differences in activity patterns between weekdays and weekends?
 
 ##Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating 
@@ -137,6 +148,7 @@ miss_val$Wk = weekdays(miss_val$Date)
 miss_val$Wkday = factor(ifelse(miss_val$Wk %in% c("Saturday" , "Sunday"), "Weekend", "Weekday"))
 #table(miss_val$Wk , miss_val$Wkday)
 ```
+
 Saturday and Sunday are now classfied as the Weekend. Overall, the measurements for the 7 days of tthe week - when looking at record count - appear to be even.
 
 ```{r Weeks_plot, echo=TRUE , ,  results='asis'}
@@ -147,6 +159,7 @@ Wks = miss_val %>% select(Wkday, interval, Steps) %>%
 xyplot( W_steps~ interval | Wkday, data=Wks, layout=c(1,2), 
         type="l",    xlab = "Interval",  ylab = "Number of steps")
 ```
+
 Based on the above, I see that weekdays have spike in the 800 to 900 interval range.
 Weekends appear to be absent of that, and what's more look like more steps are occuring overall.
 
