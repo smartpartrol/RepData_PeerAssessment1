@@ -8,14 +8,10 @@ output: html_document
 ```{r Libraries , echo=TRUE}
 library(lubridate)
 library(dplyr)
-library(tidyr)
 library(ggplot2)
-library(reshape2)
 library(lattice)
-library(ggvis)
-library(googleVis)
 ```
-####################################################
+
 #Loading and preprocessing the data
 ##Load the data (i.e. read.csv())
 ```{r Readin , echo=TRUE}
@@ -65,7 +61,7 @@ It appears that the median is slightly higer than mean implying that the data is
 
 #What is the average daily activity pattern?
 
-##Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+###Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 ```{r Ts_int, echo=TRUE ,  results='asis'}
 time = ac %>% select(interval, steps ) %>% group_by (interval) %>%
   summarize( Avg_Steps = mean(steps , na.rm=T)) %>%
@@ -96,8 +92,8 @@ sum(is.na(ac))
 ```
 2304 or 13% of the data has missing values.
 
-##Devise a strategy for filling in all of the missing values in the dataset. 
-##Create a new dataset that is equal to the original dataset but with the missing data filled in.
+###Devise a strategy for filling in all of the missing values in the dataset. 
+###Create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r Impute, echo=TRUE}
 ac2 = ac %>% select(Date, interval, steps) %>%
   group_by(Date, interval) %>% 
@@ -114,17 +110,14 @@ sum(is.na(miss_val))
 ```
 The dplyr takes the orginal data set and rolls it up by the Date and interval. It then calculates the sum and renames that to the orginal step name. Values are then imputed when the are equal to missing, in this case 0, with the interval average generated from the time plot.
 
-##Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+###Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```{r Newhist, echo=TRUE ,  results='asis'}
 newhist = miss_val %>% group_by(Date) %>% 
   summarize( D_steps = sum(Steps, na.rm=T)) 
 
-ggvis( as.data.frame(newhist) , ~ D_steps , fill :="#FF9900") %>% 
-  layer_histograms() %>%
-   add_axis("x", title="Steps", title_offset = 50) %>% 
-  add_axis("y", title="Counts", title_offset = 50)
-
+ggplot(as.data.frame(newhist) , aes(x=D_steps)) + geom_histogram(bindwidth=1 , colour="black", fill="orange" ,  position="identity") +
+  xlab("Steps Per Day") + ylab("Count") + ggtitle("Steps Histogram") + theme_bw()
 ```
 ```{r Newms, echo=TRUE}
 mean(newhist$D_steps, na.rm=T) ; median(newhist$D_steps, na.rm=T)
@@ -146,7 +139,7 @@ miss_val$Wkday = factor(ifelse(miss_val$Wk %in% c("Saturday" , "Sunday"), "Weeke
 ```
 Saturday and Sunday are now classfied as the Weekend. Overall, the measurements for the 7 days of tthe week - when looking at record count - appear to be even.
 
-```{r Weeks_plot, echo=TRUE}
+```{r Weeks_plot, echo=TRUE , ,  results='asis'}
 Wks = miss_val %>% select(Wkday, interval, Steps) %>% 
   group_by(Wkday, interval) %>%
   summarize( W_steps = mean(Steps, na.rm=T)) 
