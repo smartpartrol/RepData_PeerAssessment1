@@ -1317,7 +1317,7 @@ options["hAxis"] = {title:'Avg Steps', titleTextStyle:{color:'black'}};
 options["series"] = [{color:'blue', targetAxisIndex: 0}, 
                          {color: 'black',targetAxisIndex:1}];
 options["vAxes"] = [{title:'Interval'}, 
-                                  {title:'Value 2 (£)'}];
+                                  {title:'Value 2 (Â£)'}];
 
     var chart = new google.visualization.LineChart(
     document.getElementById('LineChartID127c3dbb447c')
